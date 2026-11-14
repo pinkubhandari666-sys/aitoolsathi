@@ -1506,40 +1506,39 @@ function initPassportPhotoTool(){
    process.disabled=true;download.disabled=true;sheet.disabled=true;
    try{
      say('Loading background-removal engine…');const seg=await loadModel();
-     say('Detecting the person and changing the background…');
-     // Camera photos can be very large and may exhaust mobile browser memory.
-     // Keep the original image for export; use a downscaled copy only for segmentation.
-     const srcW=source.naturalWidth||source.width, srcH=source.naturalHeight||source.height;
-     if(!srcW||!srcH)throw new Error('The selected photo has no readable image dimensions. Please choose the photo again.');
-     const maxInferenceSide=1600, inferenceScale=Math.min(1,maxInferenceSide/Math.max(srcW,srcH));
-     const inferenceCanvas=document.createElement('canvas');
-     inferenceCanvas.width=Math.max(1,Math.round(srcW*inferenceScale));
-     inferenceCanvas.height=Math.max(1,Math.round(srcH*inferenceScale));
-     const inferenceCtx=inferenceCanvas.getContext('2d',{alpha:false});
-     if(!inferenceCtx)throw new Error('This browser could not prepare the photo. Please reload the page and try again.');
-     inferenceCtx.drawImage(source,0,0,inferenceCanvas.width,inferenceCanvas.height);
-     const result=await new Promise(async(resolve,reject)=>{
-       const timeout=setTimeout(()=>{pendingResult=null;reject(new Error('Background removal timed out. The camera photo may be too large; try again or choose a smaller image.'))},60000);
-       pendingResult={resolve:v=>{clearTimeout(timeout);resolve(v)}};
-       try{await seg.send({image:inferenceCanvas})}catch(e){clearTimeout(timeout);pendingResult=null;reject(e)}
-     });
-     if(!result||!result.segmentationMask)throw new Error('The person could not be detected in this photo. Try a clear, front-facing portrait.');
+     say('Preparing photo and detecting the person…');
      const w=source.naturalWidth||source.width,h=source.naturalHeight||source.height;
-     // Refine the segmentation edge conservatively: slightly expand the person mask
-     // before applying it, then soften only the boundary to avoid cutting hair,
-     // shoulders and sari edges. The source photo itself is never blurred.
-     const mask=document.createElement('canvas');mask.width=w;mask.height=h;
-     const mx=mask.getContext('2d');mx.imageSmoothingEnabled=true;mx.imageSmoothingQuality='high';
-     const expand=1.006, mw=w*expand, mh=h*expand;
-     mx.drawImage(result.segmentationMask,(w-mw)/2,(h-mh)/2,mw,mh);
+     if(!w||!h)throw new Error('The selected photo could not be decoded. Please choose a JPG or PNG photo.');
+     // Camera photos can be very large (often 12–50 MP). Normalize orientation
+     // through canvas and run segmentation on a bounded preview to avoid mobile
+     // memory/GPU failures; keep the original pixels for the final output.
+     const inferScale=Math.min(1,1280/Math.max(w,h));
+     const iw=Math.max(1,Math.round(w*inferScale)),ih=Math.max(1,Math.round(h*inferScale));
+     const infer=document.createElement('canvas');infer.width=iw;infer.height=ih;
+     const ictx=infer.getContext('2d',{willReadFrequently:false});
+     if(!ictx)throw new Error('This browser cannot prepare the photo. Please try Chrome or a smaller JPG.');
+     ictx.imageSmoothingEnabled=true;ictx.imageSmoothingQuality='high';ictx.drawImage(source,0,0,iw,ih);
+     say('Detecting the person and changing the background…');
+     const result=await new Promise(async(resolve,reject)=>{
+       const timeout=setTimeout(()=>{pendingResult=null;reject(new Error('Background removal timed out. Please retry with a smaller JPG photo.'))},60000);
+       pendingResult={resolve:v=>{clearTimeout(timeout);resolve(v)}};
+       try{await seg.send({image:infer})}catch(e){clearTimeout(timeout);pendingResult=null;reject(e)}
+     });
+     if(!result||!result.segmentationMask)throw new Error('The person could not be detected in this photo. Use a clear, front-facing photo with the person separated from the background.');
+     // Build a feathered mask at inference size, then scale it to the original
+     // resolution. A tiny blur avoids jagged cut-outs while preserving hair/clothes.
+     const mask=document.createElement('canvas');mask.width=iw;mask.height=ih;
+     const mctx=mask.getContext('2d');mctx.imageSmoothingEnabled=true;mctx.drawImage(result.segmentationMask,0,0,iw,ih);
      const cut=document.createElement('canvas');cut.width=w;cut.height=h;
-     const cx=cut.getContext('2d');cx.drawImage(source,0,0,w,h);
+     const cx=cut.getContext('2d');cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality='high';
+     cx.drawImage(source,0,0,w,h);
      cx.globalCompositeOperation='destination-in';
-     cx.filter='blur(1.15px)';cx.drawImage(mask,0,0,w,h);cx.filter='none';
-     cx.globalCompositeOperation='source-over';
+     cx.filter='blur('+Math.max(0.45,Math.min(1.15,Math.max(w,h)/5000))+'px)';
+     cx.drawImage(mask,0,0,w,h);
+     cx.filter='none';cx.globalCompositeOperation='source-over';
      const out=document.createElement('canvas');out.width=w;out.height=h;
      const ox=out.getContext('2d');ox.fillStyle=bgColor();ox.fillRect(0,0,w,h);ox.drawImage(cut,0,0);
-     processed=out;renderPreview();say('Background changed. Edge refinement applied to better preserve hair and clothing. Check the preview before downloading.');
+     processed=out;renderPreview();say('Background changed. Check hair and clothing edges; if the cut-out is imperfect, try a photo with better lighting and a plain background.');
    }catch(e){console.error('Passport photo background removal:',e);say('Background change could not complete: '+(e&&e.message?e.message:'Unknown error')+'. Check your internet connection and try again. The cropped original photo is still available to download.');renderPreview();}
    finally{process.disabled=false;download.disabled=!source;sheet.disabled=!source;}
  });
