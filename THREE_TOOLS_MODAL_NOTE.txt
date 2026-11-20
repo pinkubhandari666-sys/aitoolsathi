@@ -1,0 +1,3 @@
+JPG Text Editor, ID Card Print Studio and Invoice Maker are embedded in the homepage modal using iframe srcdoc.
+The modal therefore does not depend on local relative iframe paths.
+The original standalone folders are preserved for their dedicated SEO pages.

@@ -109,8 +109,20 @@ exports.handler = async (event) => {
     const payload = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {
       const upstreamMessage = payload?.error?.message || `Gemini API returned ${upstream.status}.`;
-      const status = upstream.status === 429 ? 429 : (upstream.status >= 500 ? 502 : 400);
-      return { statusCode: status, headers, body: JSON.stringify({ error: upstreamMessage }) };
+      // Preserve Google's real 4xx status so the browser does not misleadingly
+      // label authentication/permission/model errors as a generic HTTP 400.
+      const status = upstream.status >= 400 && upstream.status < 500
+        ? upstream.status
+        : 502;
+      return {
+        statusCode: status,
+        headers,
+        body: JSON.stringify({
+          error: upstreamMessage,
+          upstreamStatus: upstream.status,
+          upstreamCode: payload?.error?.status || payload?.error?.code || null
+        })
+      };
     }
 
     let output = String(payload.output_text || '').trim();

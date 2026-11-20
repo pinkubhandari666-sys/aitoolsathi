@@ -47,3 +47,5 @@ GEMINI AI WRITER + AI DOCUMENT MAKER (BETA)
 5. DOCX export is generated in the browser. “Print / Save PDF” opens the print dialog; choose “Save as PDF”.
 6. The function currently has a lightweight per-instance IP throttle and prompt length limit. This is not a complete subscription/credit system. Before selling public access, add Firebase Authentication and persistent Firestore credit checks/rate limits.
 7. Gemini model configured: gemini-3.8-flash. Model availability and free-tier limits are controlled by Google and may change.
+
+New separate tool added: /id-card-maker/ (ID Card Maker). Existing /id-card-print/ remains separate and unchanged.

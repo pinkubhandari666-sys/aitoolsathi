@@ -650,8 +650,8 @@ const ATS_SEO_PAGES = {
 </style>
 <style>#aits-original-guide{padding:42px 0;background:#f8fafc}#aits-original-guide .wrap{max-width:1040px;margin:auto;padding:0 20px}#aits-original-guide h2{font-size:1.65rem;margin:0 0 16px}#aits-original-guide p{line-height:1.75;color:#435064;margin:0 0 14px}</style><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3773073955353988"
      crossorigin="anonymous"></script>
-</head><body>
-<header><div class="wrap nav"><a class="logo" href="#">AI <b>Tool Saathi</b></a><nav><a href="#ai">AI Tools</a><a href="#pdf">PDF Tools</a><a href="#image">Image Tools</a><a href="#docs">Document Tools</a></nav><div class="auth-actions"><button class="auth-btn primary" id="loginOpen">Login / Sign up</button><div class="auth-user" id="authUser"><div class="auth-profile"><img alt="" class="auth-avatar" id="authAvatar"/><span id="authName"></span><button id="logoutBtn">Logout</button></div></div></div></div></header>
+<style>.invoice-global-link{display:inline-block;margin:6px 10px;padding:8px 12px;border-radius:9px;background:#f1efff;color:#4b3cc4!important;font-weight:700;font-size:13px;text-decoration:none;border:1px solid #ddd9ff}.invoice-global-link:hover{background:#e7e2ff}</style></head><body>
+<header><div class="wrap nav"><a class="logo" href="#">AI <b>Tool Saathi</b></a><nav><a href="#ai">AI Tools</a><a href="#pdf">PDF Tools</a><a href="#image">Image Tools</a><a href="#docs">Document Tools</a><a href="/invoice-maker/" class="invoice-global-link">🧾 Invoice Maker</a></nav><div class="auth-actions"><button class="auth-btn primary" id="loginOpen">Login / Sign up</button><div class="auth-user" id="authUser"><div class="auth-profile"><img alt="" class="auth-avatar" id="authAvatar"/><span id="authName"></span><button id="logoutBtn">Logout</button></div></div></div></div></header>
 <main><section class="hero"><div class="wrap"><span class="badge">AI + PDF + Image + Document Tools</span><h1>Passport Photo Maker Online</h1><p>Prepare passport-style photos, adjust the crop and arrange photo sheets for printing. Check the exact photo specifications required by the organisation receiving your application.</p><div class="search"><input id="search" placeholder="Search tools: Merge PDF, Resize Image..."/><button class="btn" onclick="filterTools()">Search</button></div></div></section>
 <section><div class="wrap"><div class="head"><h2>Popular Tools</h2><p>Start quickly with the most useful tools.</p></div><div class="grid">
 <div class="card tool" data-name="AI Document Maker"><div class="icon">🤖</div><h4>AI Document Maker</h4><p>Describe what you need and create a document.</p></div><div class="card tool" data-name="Merge PDF"><div class="icon">📑</div><h4>Merge PDF</h4><p>Combine multiple PDF files.</p></div><div class="card tool" data-name="Compress PDF"><div class="icon">🗜️</div><h4>Compress PDF</h4><p>Reduce PDF size.</p></div><div class="card tool" data-name="Image Compressor"><div class="icon">🖼️</div><h4>Image Compressor</h4><p>Reduce image file size.</p></div></div></div></section>
@@ -1000,7 +1000,7 @@ const templates={
     <button class="rotate-btn" id="ppAuto" type="button">✨ Auto enhance</button>
     <button class="rotate-btn" id="ppReset" type="button">Reset adjustments</button>
   </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="ppProcess" type="button" disabled>Remove background & apply colour</button><button class="btn" id="ppDownload" type="button" disabled>Download passport photo</button><button class="btn" id="ppSheet" type="button" disabled>Download A4 sheet</button><button class="btn" id="ppPrintPhoto" type="button" disabled>🖨️ Print photo</button><button class="btn" id="ppPrintSheet" type="button" disabled>🖨️ Print A4 sheet</button></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="ppProcess" type="button" disabled>Remove background & apply colour</button><button class="btn" id="ppDownload" type="button" disabled>Download passport photo</button><button class="btn" id="ppSheet" type="button" disabled>Download A4 sheet</button><button class="btn" id="ppPrintPhoto" type="button">🖨️ Print photo</button><button class="btn" id="ppPrintSheet" type="button">🖨️ Print A4 sheet</button></div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:14px"><div><b>Passport photo preview</b><div style="background:#eef0f4;padding:10px;border-radius:12px;text-align:center"><canvas id="ppPreview" style="max-width:100%;max-height:330px;object-fit:contain"></canvas></div></div><div><b>Original photo</b><div style="background:#111;padding:10px;border-radius:12px;text-align:center;min-height:120px"><img id="ppOriginal" alt="Original photo preview" style="max-width:100%;max-height:250px;object-fit:contain"></div></div></div>
   <div class="pp-layout-panel" style="margin-top:16px;border:1px solid var(--line);border-radius:14px;padding:13px;background:#fafaff">
     <b>🧩 A4 Sheet Layout Editor — move photos individually or by row</b>
@@ -1201,8 +1201,8 @@ const templates={
 'AI Writer':`<div class="field"><label>What should be written?</label><textarea id="prompt" placeholder="Example: Write a professional leave application for 3 days..."></textarea></div><div class="row"><div class="field"><label>Output language</label><select id="aiLanguage"><option>Match my prompt</option><option>Hindi</option><option>English</option><option>Hinglish</option></select></div><div class="field"><label>Tone</label><select id="aiTone"><option>Professional</option><option>Friendly</option><option>Formal</option><option>Simple and clear</option></select></div></div><button class="btn" id="go">Generate with Gemini</button><div id="st" class="status">Gemini AI Writer ready. Enter your instructions to create original content.</div><div class="field"><label>Generated draft (editable)</label><textarea id="writerPreview" style="min-height:240px" placeholder="Your generated writing will appear here..."></textarea></div><div class="row"><button class="btn" id="aiDownloadDocx" type="button" disabled>Download DOCX</button><button class="btn" id="aiPrintPdf" type="button" disabled>Print / Save PDF</button><button class="btn" id="aiDownloadTxt" type="button" disabled>Download TXT</button></div><div class="mini">For PDF, choose “Save as PDF” in the print dialog. Generated text can be edited before export.</div>`,
 'AI Document Maker':`<div class="field"><label>What document do you need?</label><textarea id="prompt" placeholder="Example: Create a formal leave application for 3 days..."></textarea></div><div class="row"><div class="field"><label>Document type</label><select id="aiDocumentType"><option>Choose automatically</option><option>Job Application</option><option>Leave Application</option><option>Resume / CV</option><option>Cover Letter</option><option>Complaint Letter</option><option>Business Proposal</option><option>Formal Letter</option><option>School / College Application</option><option>Other</option></select></div><div class="field"><label>Output language</label><select id="aiLanguage"><option>Match my prompt</option><option>Hindi</option><option>English</option><option>Hinglish</option></select></div></div><div class="field"><label>Tone</label><select id="aiTone"><option>Professional</option><option>Formal</option><option>Friendly</option><option>Simple and clear</option></select></div><button class="btn" id="go">Create with Gemini</button><div id="st" class="status">Gemini AI Document Maker ready. Describe the document you need.</div><div class="field"><label>Generated document (editable)</label><textarea id="docPreview" style="min-height:260px" placeholder="Your generated document will appear here..."></textarea></div><div class="row"><button class="btn" id="aiDownloadDocx" type="button" disabled>Download DOCX</button><button class="btn" id="aiPrintPdf" type="button" disabled>Print / Save PDF</button><button class="btn" id="aiDownloadTxt" type="button" disabled>Download TXT</button></div><div class="mini">For PDF, choose “Save as PDF” in the print dialog. Check names, dates and other details before using official documents.</div>`,
 
-'Ask PDF':fileBox('.pdf')+`<div class="field"><label>Question</label><textarea id="prompt" placeholder="What is this PDF about?"></textarea></div><button class="btn" id="go">Ask</button><div id="st" class="status">PDF text extraction can be connected to a secure AI backend for answers.</div>`,
-'PDF Summary':fileBox('.pdf')+`<button class="btn" id="go">Extract text for summary</button><div id="st" class="status">The extraction module is ready; AI summarization requires a backend/API.</div>`,
+'Ask PDF':`<div class="field"><label>Upload a PDF</label><input id="tf" type="file" accept=".pdf,application/pdf"><div class="mini">Select a text-based PDF. Scanned PDFs may need OCR before you can ask questions.</div></div><div class="field"><label>Your question about this PDF</label><textarea id="askPdfQuestion" rows="3" placeholder="Ask a question based on the uploaded PDF…"></textarea></div><div class="row"><div class="field"><label>Answer language</label><select id="askPdfLanguage"><option>Match my question</option><option>Hindi</option><option>English</option><option>Hinglish</option></select></div></div><button class="btn" id="go">Ask Gemini about this PDF</button><div id="st" class="status">Upload a PDF and enter a question.</div><div class="field"><label>Answer</label><textarea id="askPdfAnswer" rows="12" placeholder="Your answer will appear here…"></textarea></div>`,
+'PDF Summary':`<div class="field"><label>Upload a PDF</label><input id="tf" type="file" accept=".pdf,application/pdf"><div class="mini">Select a text-based PDF. Scanned PDFs may need OCR before summarizing.</div></div><div class="row"><div class="field"><label>Summary length</label><select id="summaryLength"><option value="short">Short</option><option value="medium" selected>Medium</option><option value="detailed">Detailed</option></select></div><div class="field"><label>Output language</label><select id="summaryLanguage"><option>Match document</option><option>Hindi</option><option>English</option><option>Hinglish</option></select></div></div><button class="btn" id="go">Summarize PDF with Gemini</button><div id="st" class="status">Upload a PDF to create an AI summary.</div><div class="field"><label>PDF Summary</label><textarea id="pdfSummaryOutput" rows="16" placeholder="Your summary will appear here…"></textarea></div>`,
 };
 function generic(name){
   name=String(name||'').trim();
@@ -1548,12 +1548,42 @@ function initPassportPhotoTool(){
  }
 
  function printCanvas(canvas,title,cssSize){
-   const popup=window.open('','_blank');if(!popup){say('Allow pop-ups to print this photo.');return}
-   const data=canvas.toDataURL('image/png');
-   popup.document.open();popup.document.write(`<!doctype html><html><head><title>${title}</title><style>@page{size:${cssSize};margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;width:100%;height:100%;background:#fff}body{display:flex;align-items:center;justify-content:center}img{display:block;max-width:100%;max-height:100%;object-fit:contain}@media print{body{width:100%;height:100%}}</style></head><body><img src="${data}" alt="${title}"><script>window.onload=()=>setTimeout(()=>window.print(),350);window.onafterprint=()=>window.close();<\/script></body></html>`);
-   popup.document.close();
+   let printHost=null, printStyle=null;
+   try{
+     if(!canvas || !canvas.width || !canvas.height) throw new Error('Photo preview is empty. Upload a photo first.');
+     const copy=document.createElement('canvas');
+     copy.width=canvas.width; copy.height=canvas.height;
+     const ctx=copy.getContext('2d');
+     if(!ctx) throw new Error('Your browser could not prepare the print image.');
+     ctx.drawImage(canvas,0,0);
+     printHost=document.createElement('div');
+     printHost.id='ppTopLevelPrintHost';
+     printHost.appendChild(copy);
+     printStyle=document.createElement('style');
+     printStyle.id='ppTopLevelPrintStyle';
+     printStyle.textContent='@page{size:'+cssSize+';margin:0}@media print{html,body{margin:0!important;padding:0!important;width:100%!important;height:100%!important;background:#fff!important;overflow:hidden!important}body>*:not(#ppTopLevelPrintHost){display:none!important}#ppTopLevelPrintHost{display:flex!important;position:fixed!important;inset:0!important;width:100%!important;height:100%!important;align-items:center!important;justify-content:center!important;background:#fff!important}#ppTopLevelPrintHost canvas{display:block!important;max-width:100%!important;max-height:100%!important;width:auto!important;height:auto!important}}';
+     document.head.appendChild(printStyle);
+     document.body.appendChild(printHost);
+     const cleanup=()=>{
+       if(printHost&&printHost.parentNode)printHost.parentNode.removeChild(printHost);
+       if(printStyle&&printStyle.parentNode)printStyle.parentNode.removeChild(printStyle);
+       printHost=null;printStyle=null;
+       window.removeEventListener('afterprint',cleanup);
+     };
+     window.addEventListener('afterprint',cleanup);
+     // Keep this call synchronous: browser print permissions require the original button gesture.
+     window.focus();
+     window.print();
+     setTimeout(()=>{if(printHost&&!document.hidden)cleanup()},120000);
+   }catch(err){
+     console.error('Passport photo print error:',err);
+     if(printHost&&printHost.parentNode)printHost.parentNode.removeChild(printHost);
+     if(printStyle&&printStyle.parentNode)printStyle.parentNode.removeChild(printStyle);
+     const status=document.getElementById('ppStatus');
+     if(status)status.textContent='Print could not start: '+(err.message||'Please try again.');
+   }
  }
- document.getElementById('ppPrintPhoto').addEventListener('click',()=>{if(!source||!preview.width){say('Upload a photo first.');return}const [w,h]=dimensions();printCanvas(preview,'Passport photo',`${size.value==='2x2'?'2in 2in':size.value==='25x35'?'25mm 35mm':'35mm 45mm'}`)});
+document.getElementById('ppPrintPhoto').addEventListener('click',()=>{if(!source||!preview.width){say('Upload a photo first.');return}const [w,h]=dimensions();printCanvas(preview,'Passport photo',`${size.value==='2x2'?'2in 2in':size.value==='25x35'?'25mm 35mm':'35mm 45mm'}`)});
  document.getElementById('ppPrintSheet').addEventListener('click',()=>{if(!source||!preview.width){say('Upload and process a photo first.');return}try{printCanvas(makeA4Canvas(),'Passport photo A4 sheet','A4')}catch(e){say(e.message)}});
 
  // Individually editable A4 passport-photo sheet.
