@@ -101,7 +101,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const upstream = await fetch('https://generativelanguage.googleapis.com/v1/interactions', {
+    const upstream = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
       body: JSON.stringify({ model: 'gemini-3.8-flash', input: instruction })

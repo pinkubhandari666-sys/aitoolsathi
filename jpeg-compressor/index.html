@@ -964,7 +964,7 @@ const templates={
 'JPG to PDF':fileBox('image/*',true)+`<div class="row"><div class="field"><label>Page size</label><select id="size"><option>A4</option><option>Letter</option><option>Fit image</option></select></div><div class="field"><label>Orientation</label><select id="ori"><option>Auto</option><option>Portrait</option><option>Landscape</option></select></div></div><button class="btn" id="go">Create PDF</button><div id="st" class="status"></div>`,
 'Image to PDF':fileBox('image/*',true)+`<button class="btn" id="go">Create PDF</button><div id="st" class="status"></div>`,
 'Resize Image':fileBox('image/*')+`<div class="row"><div class="field"><label>Width (px)</label><input id="w" type="number" placeholder="1080"></div><div class="field"><label>Height (px)</label><input id="h" type="number" placeholder="1080"></div></div><label><input id="lock" type="checkbox" checked> Keep aspect ratio</label><br><br><button class="btn" id="go">Resize & Download</button><div id="st" class="status"></div>`,
-'Compress Image':fileBox('image/*')+`<div class="row"><div class="field"><label>Target type</label><select id="targetUnit"><option value="quality">Quality</option><option value="kb">KB</option><option value="mb">MB</option><option value="cm">CM</option><option value="px">Pixels</option></select></div><div class="field"><label id="targetLabel">Quality</label><input id="targetValue" type="number" value="70" min="1"><div id="targetHelp" class="mini">0–100 quality.</div></div></div><button class="btn" id="go">Compress & Download</button><div id="st" class="status"></div>`,'Image Compressor':fileBox('image/*')+`<div class="row"><div class="field"><label>Target type</label><select id="targetUnit"><option value="quality">Quality</option><option value="kb">KB</option><option value="mb">MB</option><option value="cm">CM</option><option value="px">Pixels</option></select></div><div class="field"><label id="targetLabel">Quality</label><input id="targetValue" type="number" value="70" min="1"><div id="targetHelp" class="mini">0–100 quality.</div></div></div><button class="btn" id="go">Compress & Download</button><div id="st" class="status"></div>`,'Crop Image':`<div class="crop-tool"><div class="drop"><b>Choose image</b><div class="mini">Drag the crop box or its corner/edge handles, just like a phone photo editor.</div><input id="cropFile" type="file" accept="image/*"></div><div class="crop-toolbar"><label>Ratio</label><select id="cropRatio"><option value="free">Free</option><option value="original">Original</option><option value="1">1:1</option><option value="1.333333">4:3</option><option value="1.777778">16:9</option></select><button type="button" id="cropReset">Reset</button><button type="button" id="cropFull">Full image</button></div><div id="cropStage" class="crop-stage"><div class="mini" id="cropHint">Choose an image to start cropping.</div></div><div class="crop-info"><div class="mini" id="cropSize">Crop: —</div><div class="mini" id="cropRatioText">Ratio: —</div></div><div class="crop-actions"><button class="btn" id="go" disabled>✂️ Crop & Download</button></div><div id="st" class="status"></div></div>`,
+'Compress Image':fileBox('image/*')+`<div class="row"><div class="field"><label>Target type</label><select id="targetUnit"><option value="quality">Quality</option><option value="kb">KB</option><option value="mb">MB</option><option value="cm">CM</option><option value="px">Pixels</option></select></div><div class="field"><label id="targetLabel">Quality</label><input id="targetValue" type="number" value="70" min="1"><div id="targetHelp" class="mini">0–100 quality.</div></div></div><div class="field"><label>Compression mode</label><select id="imageMode"><option value="normal">Normal</option><option value="high">High</option></select></div><button class="btn" id="go">Compress & Download</button><div id="st" class="status"></div>`,'Image Compressor':fileBox('image/*')+`<div class="row"><div class="field"><label>Target type</label><select id="targetUnit"><option value="quality">Quality</option><option value="kb">KB</option><option value="mb">MB</option><option value="cm">CM</option><option value="px">Pixels</option></select></div><div class="field"><label id="targetLabel">Quality</label><input id="targetValue" type="number" value="70" min="1"><div id="targetHelp" class="mini">0–100 quality.</div></div></div><div class="field"><label>Compression mode</label><select id="imageMode"><option value="normal">Normal</option><option value="high">High</option></select></div><button class="btn" id="go">Compress & Download</button><div id="st" class="status"></div>`,'Crop Image':`<div class="crop-tool"><div class="drop"><b>Choose image</b><div class="mini">Drag the crop box or its corner/edge handles, just like a phone photo editor.</div><input id="cropFile" type="file" accept="image/*"></div><div class="crop-toolbar"><label>Ratio</label><select id="cropRatio"><option value="free">Free</option><option value="original">Original</option><option value="1">1:1</option><option value="1.333333">4:3</option><option value="1.777778">16:9</option></select><button type="button" id="cropReset">Reset</button><button type="button" id="cropFull">Full image</button></div><div id="cropStage" class="crop-stage"><div class="mini" id="cropHint">Choose an image to start cropping.</div></div><div class="crop-info"><div class="mini" id="cropSize">Crop: —</div><div class="mini" id="cropRatioText">Ratio: —</div></div><div class="crop-actions"><button class="btn" id="go" disabled>✂️ Crop & Download</button></div><div id="st" class="status"></div></div>`,
 'Edit Image':`<div class="edit-image-editor">
   <div class="drop edit-file"><b>Choose image</b><div class="mini">One image, one editor: crop, adjust colour and rotate without leaving this setting.</div><input id="editFile" type="file" accept="image/*"></div>
   <div class="edit-tabs" aria-label="Edit image steps">
@@ -1051,7 +1051,7 @@ const templates={
   </div>
   <div id="st" class="status">Choose an image, then tap a preview below the large image to adjust it.</div>
 </div>`,
-'JPEG Compressor':fileBox('image/jpeg,.jpg,.jpeg')+`<div class="compression-options"><div class="field"><label>Quality (%)</label><input id="jpegQuality" type="number" value="70" min="1" max="100"></div><div class="field"><label>Target KB</label><input id="jpegKB" type="number" placeholder="e.g. 100" min="1"></div><div class="field"><label>Target MB</label><input id="jpegMB" type="number" placeholder="e.g. 1" min="0.01" step="0.01"></div><div class="field"><label>CM Width</label><input id="jpegCMW" type="number" placeholder="Width" min="0.1" step="0.1"></div><div class="field"><label>CM Height</label><input id="jpegCMH" type="number" placeholder="Height" min="0.1" step="0.1"></div><div class="field"><label>Pixel Width</label><input id="jpegPXW" type="number" placeholder="Width" min="1"></div><div class="field"><label>Pixel Height</label><input id="jpegPXH" type="number" placeholder="Height" min="1"></div></div><div class="mini">Sabhi options ek saath dikh rahe hain. CM ya Pixel me Width aur Height dono bhar sakte hain. Jis setting ki zarurat ho wahi value bharen.</div><button class="btn" id="go">Compress JPEG & Download</button><div id="st" class="status"></div>`,
+'JPEG Compressor':fileBox('image/jpeg,.jpg,.jpeg')+`<div class="compression-options"><div class="field"><label>Compression mode</label><select id="imageMode"><option value="normal">Normal</option><option value="high">High</option></select></div><div class="field"><label>Quality (0 = automatic)</label><input id="jpegQuality" type="number" value="0" min="0" max="95"></div><div class="field"><label>Target KB</label><input id="jpegKB" type="number" placeholder="e.g. 100" min="1"></div><div class="field"><label>Target MB</label><input id="jpegMB" type="number" placeholder="e.g. 1" min="0.01" step="0.01"></div><div class="field"><label>CM Width</label><input id="jpegCMW" type="number" placeholder="Width" min="0.1" step="0.1"></div><div class="field"><label>CM Height</label><input id="jpegCMH" type="number" placeholder="Height" min="0.1" step="0.1"></div><div class="field"><label>Pixel Width</label><input id="jpegPXW" type="number" placeholder="Width" min="1"></div><div class="field"><label>Pixel Height</label><input id="jpegPXH" type="number" placeholder="Height" min="1"></div></div><div class="mini">Sabhi options ek saath dikh rahe hain. CM ya Pixel me Width aur Height dono bhar sakte hain. Jis setting ki zarurat ho wahi value bharen.</div><button class="btn" id="go">Compress JPEG & Download</button><div id="st" class="status"></div>`,
 'Image Converter':fileBox('image/*')+`<div class="row"><div class="field"><label>Output format</label><select id="fmt"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></div></div><button class="btn" id="go">Convert & Download</button><div id="st" class="status"></div>`,
 'Pixel DPI A4':`<div class="row"><div class="field"><label>Pixels</label><input id="px" type="number" value="2480"></div><div class="field"><label>DPI</label><input id="dpi" type="number" value="300"></div></div><button class="btn" id="go">Calculate</button><div id="st" class="status"></div>`,
 'OCR Image to Text':fileBox('image/*')+`<div class="field"><label>OCR language</label><select id="ocrImageLang"><option value="eng">English</option><option value="hin">Hindi</option><option value="eng+hin" selected>Hindi + English</option></select></div><button class="btn" id="go">Run OCR</button><div id="st" class="status">OCR downloads a language model the first time.</div><div class="field"><label>Extracted text</label><textarea id="txt"></textarea></div>`,
@@ -2011,6 +2011,80 @@ async function forceImageUnderTarget(blob,targetBytes){
   }
 
   throw new Error('Could not create an image under the requested size.');
+}
+
+
+const ATS_PILLOW_API = 'https://aitoolsathi-pdf-api.onrender.com';
+async function atsCompressWithPillow(file, toolName){
+  if(!file) throw new Error('Choose an image');
+  const im = await loadImageForCompress(file);
+  const originalW = im.naturalWidth || im.width, originalH = im.naturalHeight || im.height;
+  let mode = $('#imageMode')?.value || 'normal';
+  let targetKb = 0, maxW = 0, maxH = 0, quality = 0;
+  if(toolName === 'JPEG Compressor'){
+    const kb = Number($('#jpegKB')?.value) || 0;
+    const mb = Number($('#jpegMB')?.value) || 0;
+    targetKb = mb > 0 ? Math.ceil(mb * 1024) : Math.ceil(kb);
+    quality = Math.max(0, Math.min(95, Number($('#jpegQuality')?.value) || 0));
+    const pxw = Number($('#jpegPXW')?.value) || 0, pxh = Number($('#jpegPXH')?.value) || 0;
+    const cmw = Number($('#jpegCMW')?.value) || 0, cmh = Number($('#jpegCMH')?.value) || 0;
+    if(pxw || pxh){
+      if(pxw && pxh){ maxW = pxw; maxH = pxh; }
+      else if(pxw){ maxW = pxw; maxH = Math.round(pxw * originalH / originalW); }
+      else { maxH = pxh; maxW = Math.round(pxh * originalW / originalH); }
+    }else if(cmw || cmh){
+      const cw = cmw ? cmw * 96 / 2.54 : 0, ch = cmh ? cmh * 96 / 2.54 : 0;
+      if(cw && ch){ maxW = Math.round(cw); maxH = Math.round(ch); }
+      else if(cw){ maxW = Math.round(cw); maxH = Math.round(cw * originalH / originalW); }
+      else { maxH = Math.round(ch); maxW = Math.round(ch * originalW / originalH); }
+    }
+  }else{
+    const unit = $('#targetUnit')?.value || 'quality';
+    const val = Math.max(1, Number($('#targetValue')?.value) || 1);
+    if(unit === 'kb') targetKb = Math.ceil(val);
+    else if(unit === 'mb') targetKb = Math.ceil(val * 1024);
+    else if(unit === 'px'){
+      const scale = Math.min(1, Math.sqrt(val / (originalW * originalH)));
+      maxW = Math.max(1, Math.round(originalW * scale));
+      maxH = Math.max(1, Math.round(originalH * scale));
+    }else if(unit === 'cm'){
+      const widthPx = val * 96 / 2.54;
+      const scale = Math.min(1, widthPx / originalW);
+      maxW = Math.max(1, Math.round(originalW * scale));
+      maxH = Math.max(1, Math.round(originalH * scale));
+    }else if(unit === 'quality'){
+      quality = Math.max(1, Math.min(95, val));
+    }
+  }
+  const form = new FormData();
+  form.append('file', file, file.name);
+  form.append('mode', mode);
+  form.append('target_kb', String(targetKb));
+  form.append('max_width', String(maxW));
+  form.append('max_height', String(maxH));
+  form.append('quality', String(quality));
+  if(toolName !== 'JPEG Compressor') form.append('output_format', 'original');
+  const endpoint = toolName === 'JPEG Compressor' ? '/compress-jpeg' : '/compress-image';
+  let response;
+  try{
+    response = await fetch(ATS_PILLOW_API + endpoint, {method:'POST', body:form});
+  }catch(err){
+    throw new Error('Pillow backend se connection nahi ho paya. Render deployment aur API URL check karein.');
+  }
+  if(!response.ok){
+    let message = '';
+    try{ const data = await response.json(); message = data.detail || data.message || ''; }catch(_){}
+    throw new Error(message || `Image backend error (${response.status}).`);
+  }
+  const blob = await response.blob();
+  return {
+    blob,
+    targetBytes: targetKb * 1024,
+    targetReached: response.headers.get('X-Target-Reached') !== 'false',
+    originalBytes: Number(response.headers.get('X-Original-Bytes') || file.size),
+    compressedBytes: Number(response.headers.get('X-Compressed-Bytes') || blob.size),
+    outputFormat: response.headers.get('X-Output-Format') || blob.type
+  };
 }
 
 async function compressImageTarget(f,jpegMode=false){
@@ -3326,19 +3400,12 @@ function bind(name){
   else if(['Resize Image','Compress Image','Image Compressor','JPEG Compressor','Image Converter'].includes(name)){
     if(name==='Compress Image'||name==='Image Compressor'||name==='JPEG Compressor'){
       if(!fs[0])throw Error('Choose an image');
-      blob=await compressImageTarget(fs[0],name==='JPEG Compressor');
-      const targetUnit=$('#targetUnit')?.value;
-      const targetValue=Math.max(1,Number($('#targetValue')?.value)||1);
-      const normalTarget=targetUnit==='kb'?Math.floor(targetValue*1024):targetUnit==='mb'?Math.floor(targetValue*1024*1024):0;
-      const jpegTarget=(name==='JPEG Compressor')
-        ? (Number($('#jpegMB')?.value)>0
-          ? Math.floor(Number($('#jpegMB').value)*1024*1024)
-          : (Number($('#jpegKB')?.value)>0 ? Math.floor(Number($('#jpegKB').value)*1024):0))
-        : 0;
-      const hardTarget=jpegTarget||normalTarget;
-      if(hardTarget) blob=await forceImageUnderTarget(blob,hardTarget);
-      if(hardTarget && blob.size>hardTarget) throw Error('Compression target was not met.');
-      nameOut=name==='JPEG Compressor'?'compressed-jpeg.jpg':(name==='Image Compressor'?'compressed-image.jpg':'compressed.jpg');
+      const result=await atsCompressWithPillow(fs[0],name);
+      blob=result.blob;
+      if(result.targetBytes && !result.targetReached) throw Error('Requested target size was not reached. Please increase the target size or reduce image dimensions.');
+      const ext=(blob.type==='image/png'?'png':blob.type==='image/webp'?'webp':'jpg');
+      nameOut=name==='JPEG Compressor'?'compressed-jpeg.jpg':(name==='Image Compressor'?`compressed-image.${ext}`:`compressed.${ext}`);
+      st.textContent=`Pillow compression complete: ${(result.originalBytes/1024).toFixed(1)} KB → ${(result.compressedBytes/1024).toFixed(1)} KB (${$('#imageMode')?.value||'normal'} mode).`;
     }else{
       blob=await imgProcess(name==='Resize Image'?'resize':'convert');
       nameOut=name==='Image Converter'?`converted.${$('#fmt').value.split('/')[1]}`:'processed.jpg';
@@ -3368,7 +3435,7 @@ function bind(name){
 </body></html>`],{type:'application/msword'});blob=b;nameOut='converted.doc'}
  else if(name==='PDF Summary'||name==='Ask PDF'){let tx=await pdfText(fs[0]);st.textContent='Text extracted successfully. Connect the secure AI backend to summarize or answer questions.\n\nPreview:\n'+tx.slice(0,2500);return}
  else {st.textContent='This module needs its dedicated conversion/backend engine. The workspace is ready for that integration.';return}
- dl(blob,nameOut);st.textContent=`Done — ${nameOut} downloaded.`; }catch(e){console.error(e);st.textContent='Error: '+(e.message||e)}};
+ dl(blob,nameOut);if(!st.textContent.includes('Pillow compression complete:')) st.textContent=`Done — ${nameOut} downloaded.`;else st.textContent += ` Downloaded: ${nameOut}.`; }catch(e){console.error(e);st.textContent='Error: '+(e.message||e)}};
 }
 document.querySelectorAll('.tool').forEach(x=>x.addEventListener('click',()=>openTool(x.dataset.name)));
 window.openTool = openTool;

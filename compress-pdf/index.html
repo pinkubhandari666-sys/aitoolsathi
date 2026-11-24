@@ -1220,6 +1220,38 @@ async function jpgPdf(fs){const {jsPDF}=window.jspdf;let pdf;for(let i=0;i<fs.le
 async function merge(){let out=await PDFDocument.create();for(const f of files()){let d=await loadPDF(f);let ps=await out.copyPages(d,d.getPageIndices());ps.forEach(p=>out.addPage(p))}return new Blob([await out.save()],{type:'application/pdf'})}
 async function modifyPdf(mode){let fs=files();if(!fs[0])throw Error('Choose a PDF');let d=await loadPDF(fs[0]),n=d.getPageCount();if(mode==='rotate'){let deg=Number($('#deg').value);d.getPages().forEach(p=>p.setRotation(degrees(p.getRotation().angle+deg)))}else{let sel=parsePages($('#pages').value,n);if(mode==='delete'){for(let i=n-1;i>=0;i--)if(sel.includes(i))d.removePage(i)}else{let out=await PDFDocument.create();(await out.copyPages(d,sel)).forEach(p=>out.addPage(p));return new Blob([await out.save()],{type:'application/pdf'})}}return new Blob([await d.save()],{type:'application/pdf'})}
 async function pdfToJpg(f){const data=await f.arrayBuffer(),pdf=await pdfjsLib.getDocument({data}).promise,zip=new JSZip();for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i),v=p.getViewport({scale:1.6}),c=document.createElement('canvas');c.width=v.width;c.height=v.height;await p.render({canvasContext:c.getContext('2d'),viewport:v}).promise;const b=await new Promise(r=>c.toBlob(r,'image/jpeg',.88));zip.file(`page-${i}.jpg`,b)}return zip.generateAsync({type:'blob'})}
+// Ghostscript backend connection. Deploy the Blueprint service before using this tool.
+const ATS_GHOSTSCRIPT_API = 'https://aitoolsathi-pdf-api.onrender.com';
+async function compressPdfWithBackend(file, mode, targetKb, statusEl){
+  if(!file) throw new Error('Choose a PDF file first.');
+  if(!ATS_GHOSTSCRIPT_API || ATS_GHOSTSCRIPT_API.includes('YOUR-'))
+    throw new Error('PDF backend URL is not configured yet.');
+  const form = new FormData();
+  form.append('file', file, file.name || 'document.pdf');
+  form.append('mode', mode);
+  form.append('target_kb', String(targetKb || 0));
+  if(statusEl) statusEl.textContent = 'Connecting to Ghostscript backend… First request may take up to a minute while the free service wakes up.';
+  let response;
+  try {
+    response = await fetch(ATS_GHOSTSCRIPT_API + '/compress', {method:'POST', body:form});
+  } catch (e) {
+    throw new Error('Backend se connection nahi ho paya. Render deploy aur API URL check karein.');
+  }
+  if(!response.ok){
+    let message = 'PDF compression failed (' + response.status + ').';
+    try { const data = await response.json(); if(data && data.detail) message = String(data.detail); } catch (_) {}
+    throw new Error(message);
+  }
+  const blob = await response.blob();
+  if(!blob.size || blob.type !== 'application/pdf') throw new Error('Backend ne valid PDF return nahi ki.');
+  const reached = response.headers.get('X-Target-Reached');
+  if(targetKb > 0 && reached === 'false') {
+    const actual = (blob.size/1024).toFixed(1);
+    throw new Error(`Readable PDF ban gayi (${actual} KB), lekin ${targetKb} KB target quality ko bahut kam kiye bina achieve nahi hua. Is result ko download nahi kiya gaya.`);
+  }
+  return blob;
+}
+
 async function compressPdfTarget(f){
   const unit=$('#pdfTargetUnit')?.value||'quality';
   const val=Math.max(1,Number($('#pdfTargetValue')?.value)||1);
@@ -3311,13 +3343,12 @@ function bind(name){
  else if(name==='PDF to JPG'){blob=await pdfToJpg(fs[0]),nameOut='pdf-pages.zip'}
  else if(name==='Compress PDF'){
      const mode=document.querySelector('input[name=\"pdfCompressionMode\"]:checked')?.value||'normal';
-     st.textContent=(mode==='high'?'High Fast Engine':'Normal')+' compression starting…';
-     blob=mode==='high'?await compressPdfTargetHigh(fs[0]):await compressPdfTarget(fs[0]);
      const unit=$('#pdfTargetUnit').value,val=Math.max(1,Number($('#pdfTargetValue').value)||1);
-     const target=unit==='kb'?Math.floor(val*1024):unit==='mb'?Math.floor(val*1024*1024):0;
-     if(target && blob.size>=target) throw new Error('Target size was not met. No oversized PDF will be downloaded.');
+     const targetKb=unit==='kb'?Math.floor(val):unit==='mb'?Math.floor(val*1024):0;
+     st.textContent=(mode==='high'?'High Quality':'Normal Quality')+' Ghostscript compression starting…';
+     blob=await compressPdfWithBackend(fs[0],mode,targetKb,st);
      nameOut='compressed.pdf';
-     if(target) st.textContent=`Done — ${ (blob.size/1024).toFixed(1) } KB (target: under ${val} ${unit.toUpperCase()}).`;
+     st.textContent=`Ghostscript complete — ${(blob.size/1024).toFixed(1)} KB. Text/vector preservation depends on the source PDF; please inspect scanned pages and QR codes.`;
    }
  else if(name==='Protect PDF'){if(!fs[0])throw Error('Choose a PDF');const pw=$('#pdfPassword').value,pw2=$('#pdfPassword2').value;if(!pw)throw Error('Password enter karein.');if(pw!==pw2)throw Error('Passwords do not match.');const sec=await window.TSPdfSecurityPromise;if(!sec)throw Error('PDF security engine load nahi hua. Internet connection check karke page reload karein.');st.textContent='Encrypting PDF…';const locked=await sec.lock(fs[0],{userPassword:pw,keyLength:Number($('#pdfKeyLength').value)||256});blob=new Blob([locked],{type:'application/pdf'});nameOut='protected.pdf'}
  else if(name==='Unlock PDF'){if(!fs[0])throw Error('Choose a PDF');const pw=$('#pdfUnlockPassword').value;if(!pw)throw Error('Password enter karein.');const sec=await window.TSPdfSecurityPromise;if(!sec)throw Error('PDF security engine load nahi hua. Internet connection check karke page reload karein.');st.textContent='Unlocking PDF…';const opened=await sec.unlock(fs[0],{password:pw});blob=new Blob([opened],{type:'application/pdf'});nameOut='unlocked.pdf'}

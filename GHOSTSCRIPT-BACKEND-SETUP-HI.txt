@@ -1,0 +1,22 @@
+AIToolSathi Combined Backend Setup (Ghostscript + Pillow)
+
+1) Is ZIP ko extract karke poori website ko GitHub repository ke root mein upload karein.
+2) Render Dashboard > New > Blueprint select karein aur wahi GitHub repository choose karein.
+3) Root render.yaml mein rootDir: ghostscript-backend configured hai. Render isi folder ka Docker backend deploy karega.
+4) Deploy complete hone ke baad Render service ke /health endpoint ko open karein.
+5) Response mein engines.ghostscript=true aur engines.pillow=true hona chahiye.
+6) PDF Compressor /compress endpoint par Ghostscript use karta hai.
+7) JPEG Compressor /compress-jpeg endpoint par Pillow use karta hai.
+8) Compress Image aur Image Compressor /compress-image endpoint par Pillow use karte hain.
+
+Frontend pages already connected in code:
+- Homepage
+- /jpeg-compressor/
+- /compress-image/
+- /image-compressor/
+- PDF Compressor remains connected to /compress.
+
+Default API URL: https://aitoolsathi-pdf-api.onrender.com
+Agar Render koi alag URL assign kare, to relevant HTML pages mein ATS_GHOSTSCRIPT_API aur ATS_PILLOW_API update karein.
+
+Live test abhi deployment ke baad karna hoga. ZIP mein code integration aur local checks kiye gaye hain; live Render availability ka daawa nahi hai.

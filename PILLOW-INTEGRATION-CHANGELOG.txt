@@ -1,0 +1,6 @@
+AIToolSathi Pillow integration v1
+- Connected homepage and dedicated JPEG/Image Compressor pages to FastAPI Pillow endpoints.
+- Kept the original PDF Ghostscript endpoint implementation unchanged.
+- Added Pillow dependency and combined health/root endpoint reporting.
+- Added Normal/High mode selectors and optional quality control.
+- Local Python, JavaScript, and endpoint tests passed; live Render test remains pending.
