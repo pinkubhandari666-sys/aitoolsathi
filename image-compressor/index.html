@@ -3249,7 +3249,10 @@ async function atsRunGeminiDraft(toolName) {
   button.disabled = true;
   statusEl.textContent = 'Connecting to Gemini…';
   try {
-    const response = await fetch('/.netlify/functions/gemini-generate', {
+    const aiEndpoint = toolName === 'AI Document Maker'
+      ? '/.netlify/functions/gemini-document-generate'
+      : '/.netlify/functions/gemini-generate';
+    const response = await fetch(aiEndpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
