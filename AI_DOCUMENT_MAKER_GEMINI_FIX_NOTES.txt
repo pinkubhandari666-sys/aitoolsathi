@@ -1,0 +1,20 @@
+AIToolSathi AI Document Maker Gemini fix
+
+Updated:
+- netlify/functions/gemini-document-generate.js now uses the same Gemini Interactions API request/response flow as the site's existing gemini-generate.js function.
+- Keeps the existing Gemini model fallback order: gemini-3.8-flash, gemini-3.6-flash, gemini-3.5-flash-lite.
+- Adds clearer server-side logs for upstream HTTP errors and request exceptions (API keys and user prompts are not logged).
+- Returns more useful error messages for missing API key, invalid/unauthorized key, quota/rate limits, missing model and empty model output.
+- Adds more explicit Resume/CV section guidance while requiring placeholders instead of invented personal details.
+
+Deploy:
+1. Extract this ZIP and deploy the full website folder to Netlify.
+2. Confirm Netlify Environment Variables contains GEMINI_API_KEY.
+3. Trigger a fresh production deploy after checking/saving the variable.
+4. Test AI Document Maker with a short prompt first.
+5. If it still fails, open Netlify > Functions > gemini-document-generate > Logs. The logs now include the upstream status/model/error message (never the API key).
+
+Validation performed:
+- Node syntax check passed for gemini-document-generate.js.
+- ZIP integrity check performed after packaging.
+- Live Gemini API and deployed Netlify execution were not tested from this environment.

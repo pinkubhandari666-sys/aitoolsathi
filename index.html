@@ -1580,8 +1580,18 @@ function initPassportPhotoTool(){
      });
      if(!result||!result.segmentationMask)throw new Error('The person could not be detected in this photo. Try a clear, front-facing portrait.');
      const w=source.naturalWidth||source.width,h=source.naturalHeight||source.height;
-     const cut=document.createElement('canvas');cut.width=w;cut.height=h;const cx=cut.getContext('2d');cx.drawImage(source,0,0,w,h);cx.globalCompositeOperation='destination-in';cx.drawImage(result.segmentationMask,0,0,w,h);cx.globalCompositeOperation='source-over';
-     const out=document.createElement('canvas');out.width=w;out.height=h;const ox=out.getContext('2d');ox.fillStyle=bgColor();ox.fillRect(0,0,w,h);ox.drawImage(cut,0,0);processed=out;renderPreview();say('Background changed successfully. Download the passport photo or A4 sheet.');
+     // Apply the same free edge refinement used by the dedicated Passport Photo Maker.
+     // Original subject pixels are retained; only the segmentation alpha mask is softened.
+     const mask=document.createElement('canvas');mask.width=w;mask.height=h;
+     const mx=mask.getContext('2d',{willReadFrequently:true});
+     mx.save();mx.filter='blur(0.55px)';mx.drawImage(result.segmentationMask,0,0,w,h);mx.restore();
+     const md=mx.getImageData(0,0,w,h),ma=md.data;
+     for(let i=3;i<ma.length;i+=4){if(ma[i]<8)ma[i]=0;else if(ma[i]>248)ma[i]=255;}
+     mx.putImageData(md,0,0);
+     const cut=document.createElement('canvas');cut.width=w;cut.height=h;
+     const cx=cut.getContext('2d');cx.drawImage(source,0,0,w,h);
+     cx.globalCompositeOperation='destination-in';cx.drawImage(mask,0,0,w,h);cx.globalCompositeOperation='source-over';
+     const out=document.createElement('canvas');out.width=w;out.height=h;const ox=out.getContext('2d');ox.fillStyle=bgColor();ox.fillRect(0,0,w,h);ox.drawImage(cut,0,0);processed=out;renderPreview();say('Background changed successfully with refined edges. Download the passport photo or A4 sheet.');
    }catch(e){console.error('Passport photo background removal:',e);say('Background change could not complete: '+(e&&e.message?e.message:'Unknown error')+'. Check your internet connection and try again. The cropped original photo is still available to download.');renderPreview();}
    finally{process.disabled=false;download.disabled=!source;sheet.disabled=!source;}
  });
