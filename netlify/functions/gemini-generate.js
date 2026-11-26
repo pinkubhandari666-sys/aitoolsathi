@@ -100,44 +100,78 @@ exports.handler = async (event) => {
     ].join('\n');
   }
 
-  try {
-    const upstream = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-      body: JSON.stringify({ model: 'gemini-3.8-flash', input: instruction })
-    });
-    const payload = await upstream.json().catch(() => ({}));
-    if (!upstream.ok) {
-      const upstreamMessage = payload?.error?.message || `Gemini API returned ${upstream.status}.`;
-      // Preserve Google's real 4xx status so the browser does not misleadingly
-      // label authentication/permission/model errors as a generic HTTP 400.
-      const status = upstream.status >= 400 && upstream.status < 500
-        ? upstream.status
-        : 502;
-      return {
-        statusCode: status,
-        headers,
-        body: JSON.stringify({
-          error: upstreamMessage,
-          upstreamStatus: upstream.status,
-          upstreamCode: payload?.error?.status || payload?.error?.code || null
-        })
-      };
-    }
+  // Use the same model fallback chain for every Gemini-powered tool.
+  // A temporary overload or rate limit on one model should not stop the
+  // user's request when another supported model is available.
+  const models = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
 
-    let output = String(payload.output_text || '').trim();
-    if (!output && Array.isArray(payload.steps)) {
-      output = payload.steps
-        .filter(step => step?.type === 'model_output' && Array.isArray(step.content))
-        .flatMap(step => step.content)
-        .filter(part => part?.type === 'text')
-        .map(part => part.text || '')
-        .join('\n')
-        .trim();
+  let lastStatus = 502;
+  let lastMessage = 'Gemini could not generate a response. Please try again.';
+
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i];
+    try {
+      const upstream = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+        body: JSON.stringify({ model, input: instruction })
+      });
+      const payload = await upstream.json().catch(() => ({}));
+
+      if (!upstream.ok) {
+        lastStatus = upstream.status;
+        lastMessage = payload?.error?.message || `Gemini API returned ${upstream.status}.`;
+        const retryable = [408, 404, 429, 500, 502, 503, 504].includes(upstream.status);
+        if (i < models.length - 1 && retryable) continue;
+
+        const status = upstream.status >= 400 && upstream.status < 500 && upstream.status !== 429
+          ? upstream.status : 502;
+        return {
+          statusCode: status,
+          headers,
+          body: JSON.stringify({
+            error: (upstream.status === 429 || upstream.status === 503)
+              ? 'Gemini models are temporarily busy or rate-limited. Please try again shortly.'
+              : lastMessage,
+            upstreamStatus: upstream.status,
+            upstreamCode: payload?.error?.status || payload?.error?.code || null,
+            model
+          })
+        };
+      }
+
+      let output = String(payload.output_text || '').trim();
+      if (!output && Array.isArray(payload.steps)) {
+        output = payload.steps
+          .filter(step => step?.type === 'model_output' && Array.isArray(step.content))
+          .flatMap(step => step.content)
+          .filter(part => part?.type === 'text')
+          .map(part => part.text || '')
+          .join('\n')
+          .trim();
+      }
+      if (!output) {
+        lastStatus = 502;
+        lastMessage = 'Gemini did not return text. Please try again.';
+        if (i < models.length - 1) continue;
+        return { statusCode: 502, headers, body: JSON.stringify({ error: lastMessage, upstreamStatus: lastStatus, model }) };
+      }
+
+      return { statusCode: 200, headers, body: JSON.stringify({ text: output, model }) };
+    } catch (error) {
+      lastStatus = 502;
+      lastMessage = 'Could not connect to Gemini. Please check your connection and try again.';
+      if (i < models.length - 1) continue;
     }
-    if (!output) return { statusCode: 502, headers, body: JSON.stringify({ error: 'Gemini did not return text. Please try again.' }) };
-    return { statusCode: 200, headers, body: JSON.stringify({ text: output, model: 'gemini-3.8-flash' }) };
-  } catch (error) {
-    return { statusCode: 502, headers, body: JSON.stringify({ error: 'Could not connect to Gemini. Please try again.' }) };
   }
+
+  return {
+    statusCode: 502,
+    headers,
+    body: JSON.stringify({
+      error: 'All configured Gemini models are temporarily unavailable. Please try again shortly.',
+      upstreamStatus: lastStatus,
+      details: lastMessage
+    })
+  };
 };

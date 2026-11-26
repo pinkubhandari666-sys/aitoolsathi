@@ -56,7 +56,7 @@ exports.handler = async (event) => {
     prompt
   ].join('\n');
 
-  const models = ['gemini-3.8-flash', 'gemini-3.5-flash-lite'];
+  const models = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
   let lastStatus = 502;
   let lastMessage = 'Gemini could not generate the document. Please try again.';
 
@@ -79,19 +79,22 @@ exports.handler = async (event) => {
       if (!upstream.ok) {
         lastStatus = upstream.status;
         lastMessage = payload?.error?.message || `Gemini API returned ${upstream.status}.`;
-        const retryable = [408, 429, 500, 502, 503, 504].includes(upstream.status);
-        if (i === 0 && retryable) continue;
+        const retryable = [408, 404, 429, 500, 502, 503, 504].includes(upstream.status);
+        // Try every configured model for transient errors and unavailable model IDs.
+        // Do not stop after the second model: continue until one succeeds or the chain ends.
+        if (retryable && i < models.length - 1) continue;
         const clientStatus = upstream.status >= 400 && upstream.status < 500 && upstream.status !== 429
           ? upstream.status : 502;
         return {
           statusCode: clientStatus,
           headers,
           body: JSON.stringify({
-            error: upstream.status === 429 || upstream.status === 503
-              ? 'Gemini is temporarily busy. Please wait a few seconds and try again.'
+            error: (upstream.status === 429 || upstream.status === 503)
+              ? 'All configured Gemini models are temporarily busy or rate-limited. Please try again shortly.'
               : lastMessage,
             upstreamStatus: upstream.status,
-            model
+            model,
+            attemptedModels: models.slice(0, i + 1)
           })
         };
       }
@@ -105,8 +108,8 @@ exports.handler = async (event) => {
       if (!output) {
         lastStatus = 502;
         lastMessage = 'Gemini returned an empty document. Please try again.';
-        if (i === 0) continue;
-        return { statusCode: 502, headers, body: JSON.stringify({ error: lastMessage, model }) };
+        if (i < models.length - 1) continue;
+        return { statusCode: 502, headers, body: JSON.stringify({ error: lastMessage, model, attemptedModels: models }) };
       }
 
       return {
@@ -117,7 +120,7 @@ exports.handler = async (event) => {
     } catch (error) {
       lastStatus = 502;
       lastMessage = 'Could not connect to Gemini. Please check your connection and try again.';
-      if (i === 0) continue;
+      if (i < models.length - 1) continue;
     }
   }
 
@@ -125,7 +128,7 @@ exports.handler = async (event) => {
     statusCode: 502,
     headers,
     body: JSON.stringify({
-      error: 'Gemini is temporarily unavailable. Please wait a few seconds and try again.',
+      error: 'All configured Gemini models are temporarily unavailable. Please try again shortly.',
       upstreamStatus: lastStatus,
       details: lastMessage
     })
